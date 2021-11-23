@@ -16,8 +16,7 @@ const db = require('../models');
 
 
 router.get("/workouts", (req, res) => {
-  Transaction.find({})
-    .sort({ date: -1 })
+  db.Workout.find({})
     .then(dbTransaction => {
       res.json(dbTransaction);
     })
