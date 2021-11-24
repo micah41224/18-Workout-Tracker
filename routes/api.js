@@ -14,7 +14,7 @@ const db = require('../models');
 //     });
 // });
 
-
+//Matches getLastWorkout()
 router.get("/api/workouts", (req, res) => {
   db.Workout.find({})
     .then(workout => {
@@ -37,7 +37,8 @@ router.get("/api/workouts", (req, res) => {
 // });
 
 
-router.post("/api/workouts", (req, res) => {
+// Matches createWorkout()
+router.post("/api/workouts", ({ body}, res) => {
   db.Workout.create(body)
     .then(newWorkout => {
       res.json(newWorkout);
@@ -48,6 +49,7 @@ router.post("/api/workouts", (req, res) => {
 });
 
 
+// Matches getWorkoutsInRange()
 router.get("/api/workouts/range", (req, res) => {
     db.Workout.find({}).sort({day:-1}).limit(7)
         .then(dbWorkoutRange => {
@@ -58,6 +60,18 @@ router.get("/api/workouts/range", (req, res) => {
         });
 });
 
+
+// Matches addExercise()
+router.put("/api/workouts/:id", (req, res) => {
+    db.Workout.findByIdAndUpdate({_id: req.params.id}, {$push: {exercises: req.body}}, {new: true}
+        )
+        .then(dbAmmendWorkout => {
+            res.json(dbAmmendWorkout);
+        })
+        .catch(err => {
+            res.status(400).json(err);
+        });
+});
 
 
 
