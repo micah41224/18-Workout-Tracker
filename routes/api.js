@@ -16,7 +16,13 @@ const db = require('../models');
 
 //Matches getLastWorkout()
 router.get("/api/workouts", (req, res) => {
-  db.Workout.find({})
+    db.Workout.aggregate([
+    { $addFields: {
+        totalDuration: {
+            $sum: '$exercises.duration'
+        }
+        }}
+    ])
     .then(workout => {
       res.json(workout);
     })
@@ -50,14 +56,38 @@ router.post("/api/workouts", ({ body}, res) => {
 
 
 // Matches getWorkoutsInRange()
+// router.get("/api/workouts/range", (req, res) => {
+//     db.Workout.find({}).sort({day:-1}).limit(7)
+//         .then(dbWorkoutRange => {
+//             res.json(dbWorkoutRange);
+//         })
+//         .catch(err => {
+//             res.status(400).json(err);
+//         });
+// });
+
+
+// Used https://docs.mongodb.com/manual/reference/operator/aggregation/addFields/
+// Extremely helpful, followed format in scores.aggregate example
+
 router.get("/api/workouts/range", (req, res) => {
-    db.Workout.find({}).sort({day:-1}).limit(7)
-        .then(dbWorkoutRange => {
-            res.json(dbWorkoutRange);
-        })
-        .catch(err => {
-            res.status(400).json(err);
-        });
+    db.Workout.aggregate( [
+        {
+          $addFields:{
+            totalDuration: { $sum: '$exercises.duration'}
+        }
+      }
+// Used https://mongoosejs.com/docs/api.html#aggregate_Aggregate to research .sort
+    ] ).sort( {
+        _id: -1
+// Also used https://mongoosejs.com/docs/api.html#aggregate_Aggregate to research .limit, interesting that it can save your app from running out of memory
+    }).limit(8)
+    .then(dbWorkout => {
+        res.json(dbWorkout);
+    })
+    .catch(err => {
+        res.status(400).json(err)
+    });
 });
 
 
