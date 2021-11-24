@@ -15,7 +15,7 @@ const db = require('../models');
 // });
 
 
-router.get("/workouts", (req, res) => {
+router.get("/api/workouts", (req, res) => {
   db.Workout.find({})
     .then(workout => {
       res.json(workout);
@@ -23,6 +23,39 @@ router.get("/workouts", (req, res) => {
     .catch(err => {
       res.status(400).json(err);
     });
+});
+
+
+// router.post("/api/transaction", ({ body }, res) => {
+//   Transaction.create(body)
+//     .then(dbTransaction => {
+//       res.json(dbTransaction);
+//     })
+//     .catch(err => {
+//       res.status(400).json(err);
+//     });
+// });
+
+
+router.post("/api/workouts", (req, res) => {
+  db.Workout.create(body)
+    .then(newWorkout => {
+      res.json(newWorkout);
+    })
+    .catch(err => {
+      res.status(400).json(err);
+    });
+});
+
+
+router.get("/api/workouts/range", (req, res) => {
+    db.Workout.find({}).sort({day:-1}).limit(7)
+        .then(dbWorkoutRange => {
+            res.json(dbWorkoutRange);
+        })
+        .catch(err => {
+            res.status(400).json(err);
+        });
 });
 
 
