@@ -16,9 +16,11 @@ const db = require('../models');
 
 //Matches getLastWorkout()
 router.get("/api/workouts", (req, res) => {
+// Used https://docs.mongodb.com/manual/reference/operator/aggregation/addFields/
     db.Workout.aggregate([
     { $addFields: {
         totalDuration: {
+// Used https://docs.mongodb.com/manual/reference/operator/aggregation/sum/
             $sum: '$exercises.duration'
         }
         }}
